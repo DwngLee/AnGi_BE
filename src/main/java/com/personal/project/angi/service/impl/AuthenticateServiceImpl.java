@@ -1,5 +1,6 @@
 package com.personal.project.angi.service.impl;
 
+import com.personal.project.angi.enums.MessageResponseEnum;
 import com.personal.project.angi.enums.ResponseCodeEnum;
 import com.personal.project.angi.exception.response.ResponseBuilder;
 import com.personal.project.angi.mapping.UserMapper;
@@ -31,7 +32,7 @@ public class AuthenticateServiceImpl implements AuthenticateService {
 
             if (isUserExist(userInfoModel.getUsername())) {
                 return ResponseBuilder.badRequestResponse(
-                        ResponseCodeEnum.USER0200.getMessage(),
+                        MessageResponseEnum.CREATED_USER_FAILED.getMessage(),
                         ResponseCodeEnum.USER0200);
             }
 
@@ -39,19 +40,19 @@ public class AuthenticateServiceImpl implements AuthenticateService {
 
             try{
                 userRepository.save(userInfoModel);
-                userElkService.saveorUpdateUser(userInfoModel);
+                userElkService.saveOrUpdateUser(userInfoModel);
             }catch (Exception e){
                 return ResponseBuilder.badRequestResponse(
-                        ResponseCodeEnum.USER0201.getMessage(),
+                        MessageResponseEnum.CREATED_USER_FAILED.getMessage(),
                         ResponseCodeEnum.USER0201);
             }
 
             return ResponseBuilder.okResponse(
-                    ResponseCodeEnum.USER1200.getMessage(),
+                    MessageResponseEnum.CREATED_USER_SUCCESS.getMessage(),
                     ResponseCodeEnum.USER1200);
         } catch (Exception e) {
             return ResponseBuilder.badRequestResponse(
-                    ResponseCodeEnum.USER0202.getMessage(),
+                    MessageResponseEnum.CREATED_USER_FAILED.getMessage(),
                     ResponseCodeEnum.USER0202);
         }
 

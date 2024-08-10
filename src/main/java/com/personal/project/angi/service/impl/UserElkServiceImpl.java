@@ -19,7 +19,7 @@ public class UserElkServiceImpl implements UserElkService {
     private final UserMapper userMapper;
 
     @Override
-    public void saveorUpdateUser(UserInfoModel userInfoModel) {
+    public void saveOrUpdateUser(UserInfoModel userInfoModel) {
         userElkRepository.save(userMapper.toUserElkModel(userInfoModel));
     }
 

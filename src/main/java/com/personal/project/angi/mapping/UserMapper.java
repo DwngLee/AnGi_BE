@@ -1,11 +1,13 @@
 package com.personal.project.angi.mapping;
 
 import com.personal.project.angi.model.dto.request.UserRegisterRequest;
+import com.personal.project.angi.model.dto.request.UserUpdateInfoRequest;
 import com.personal.project.angi.model.dto.response.UserInfoResponse;
 import com.personal.project.angi.model.enity.UserElkModel;
 import com.personal.project.angi.model.enity.UserInfoModel;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 import org.springframework.beans.factory.annotation.Value;
 
 @Mapper(componentModel = "spring")
@@ -18,4 +20,7 @@ public interface UserMapper {
     UserElkModel toUserElkModel(UserInfoModel userInfoModel);
     @Mapping(target = "joinDate", source = "createdAt")
     UserInfoResponse toUserInfoResponse(UserInfoModel userInfoModel);
+    void updateUserInfoModel(@MappingTarget UserInfoModel userInfoModel, UserUpdateInfoRequest userUpdateInfoRequest);
 }
+
+

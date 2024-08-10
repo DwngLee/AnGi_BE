@@ -14,6 +14,7 @@ public class UserUpdateInfoRequest {
     String avatarLink;
     String facebookLink;
     String instagramLink;
+    String phoneNumber;
     String ward;
     String district;
     String city;

@@ -20,6 +20,18 @@ public enum ResponseCodeEnum {
     //UPDATE USER
     UPDATEUSER1200("UPDATEUSER1200", "Update user successfully"),
     UPDATEUSER0200("UPDATEUSER0200", "Get user update failed"),
+    UPDATEUSER0201("UPDATEUSER0201", "Cannot update user"),
+    UPDATEUSER0202("UPDATEUSER0202", "Save user update information failed"),
+    UPDATEUSER0203("UPDATEUSER0203", "Update user failed"),
+
+    //UPDATE USER AVATAR
+    UPDATEUSERAVATAR1200("UPDATEUSERAVATAR1200", "Update user avatar successfully"),
+    UPDATEUSERAVATAR0200("UPDATEUSERAVATAR0200", "Get user avatar update failed"),
+    UPDATEUSERAVATAR0201("UPDATEUSERAVATAR0201", "Upload avatar image  to cloud failed"),
+    UPDATEUSERAVATAR0202("UPDATEUSERAVATAR0202", "Save avatar image failed"),
+    UPDATEUSERAVATAR0203("UPDATEUSERAVATAR0203", "Update user avatar failed"),
+
+
 
     //GENERAL
     EXCEPTION("EXCEPTION", "Uncatagory Exception"),
@@ -31,10 +43,7 @@ public enum ResponseCodeEnum {
     private final String code, message;
 
     ResponseCodeEnum(String code, String message) {
-
         this.code = code;
         this.message = message;
     }
-
-
 }
