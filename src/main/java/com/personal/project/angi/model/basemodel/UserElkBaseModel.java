@@ -18,6 +18,8 @@ public class UserElkBaseModel {
 
     private String city;
 
+    private String avatarUrl;
+
     @Field("createdAt")
     @CreatedDate
     private LocalDateTime createdAt;

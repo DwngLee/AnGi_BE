@@ -3,6 +3,9 @@ package com.personal.project.angi.service.impl;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import com.personal.project.angi.service.FileService;
+import com.personal.project.angi.util.Util;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,21 +18,8 @@ import java.util.*;
 
 @Service
 public class FileServiceImpl implements FileService {
-    Cloudinary cloudinary;
-    @Value("${cloudinary.cloud-name}")
-    private String CLOUD_NAME;
-    @Value("${cloudinary.api-key}")
-    private String API_KEY;
-    @Value("${cloudinary.api-secret}")
-    private String API_SECRET;
-
-    public FileServiceImpl() {
-        Map<String, String> valuesMap = new HashMap<>();
-        valuesMap.put("cloud_name", CLOUD_NAME);
-        valuesMap.put("api_key", API_KEY);
-        valuesMap.put("api_secret", API_SECRET);
-        cloudinary = new Cloudinary(valuesMap);
-    }
+    @Autowired
+    private  Cloudinary cloudinary;
 
     @Override
     public List<Map> uploadMultiFiles(MultipartFile[] multipartFiles, String folderName) throws IOException {
@@ -47,9 +37,17 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public Map uploadFile(MultipartFile multipartFile, String folderName) throws IOException {
+    public Map uploadFile(MultipartFile multipartFile, String id, String typeUpload) throws IOException {
         File file = convert(multipartFile);
-        Map params = ObjectUtils.asMap("folder", folderName);
+        String filePathKey = getFilePathKey(id, typeUpload);
+
+        // Set up the parameters for Cloudinary upload
+        Map params = ObjectUtils.asMap(
+                "use_filename", false,
+                "unique_filename", true,
+                "folder", filePathKey
+        );
+
         Map result = cloudinary.uploader().upload(file, params);
         return result;
     }
@@ -66,5 +64,25 @@ public class FileServiceImpl implements FileService {
         fo.write(multipartFile.getBytes());
         fo.close();
         return file;
+    }
+
+    private String getFilePathKey(String originalFilename, String userId, String typeUpload) {
+        // Generate new filename
+        Date current = new Date();
+
+        String newFileName = String.valueOf(current.getTime());
+        String modifiedFilename = modifyFilename(originalFilename, newFileName);
+
+        return Util.generateFileDirectory(typeUpload, userId, modifiedFilename);
+    }
+
+    private String getFilePathKey(String userId, String typeUpload) {
+        return Util.generateFileDirectory(typeUpload, userId);
+    }
+
+    private String modifyFilename(String originalFilename, String newFilename) {
+        String fileExtension = originalFilename.substring(originalFilename.lastIndexOf("."));
+
+        return newFilename + fileExtension;
     }
 }

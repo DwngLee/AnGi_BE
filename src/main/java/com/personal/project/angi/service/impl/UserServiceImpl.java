@@ -52,10 +52,80 @@ public class UserServiceImpl implements UserService {
             }
             UserInfoModel userInfo = userInfoModel.get();
 
-        }catch (Exception e){
+            try {
+                userMapper.updateUserInfoModel(userInfo, userInfoRequest);
+            } catch (Exception e) {
+                return ResponseBuilder.badRequestResponse(
+                        MessageResponseEnum.UPDATE_USER_INFO_FAILED.getMessage(),
+                        ResponseCodeEnum.UPDATEUSER0201);
+            }
+
+            try {
+                userRepository.save(userInfo);
+                userElkService.saveOrUpdateUser(userInfo);
+            } catch (Exception e) {
+                return ResponseBuilder.badRequestResponse(
+                        MessageResponseEnum.UPDATE_USER_INFO_FAILED.getMessage(),
+                        ResponseCodeEnum.UPDATEUSER0202);
+            }
+
+            return ResponseBuilder.okResponse(
+                    MessageResponseEnum.UPDATE_USER_INFO_SUCCESS.getMessage(),
+                    userMapper.toUserInfoResponse(userInfo),
+                    ResponseCodeEnum.UPDATEUSER1200
+            );
+
+        } catch (Exception e) {
             return ResponseBuilder.badRequestResponse(
-                    ResponseCodeEnum.UPDATEUSER0201.getMessage(),
-                    ResponseCodeEnum.UPDATEUSER0201);
+                    MessageResponseEnum.UPDATE_USER_INFO_FAILED.getMessage(),
+                    ResponseCodeEnum.UPDATEUSER0203);
+        }
+    }
+
+    @Override
+    public ResponseEntity<ResponseDto<Void>> updateUserAvatar(String userId, MultipartFile file) {
+        try {
+            Optional<UserInfoModel> userInfoModel = userRepository.findById(userId);
+            if (userInfoModel.isEmpty()) {
+                return ResponseBuilder.badRequestResponse(
+                        MessageResponseEnum.UPDATE_USER_AVATAR_FAILED.getMessage(),
+                        ResponseCodeEnum.UPDATEUSER0200);
+            }
+
+            Map imageUrl = null;
+            if (file != null) {
+                try {
+                    imageUrl = fileService.uploadFile(file, userId, UploadConstant.USER_AVATAR);
+                } catch (Exception e) {
+                    return ResponseBuilder.badRequestResponse(
+                            MessageResponseEnum.UPDATE_USER_AVATAR_FAILED.getMessage(),
+                            ResponseCodeEnum.UPDATEUSER0201);
+                }
+            }
+
+            try {
+                UserInfoModel user = userInfoModel.get();
+                if (file != null) {
+                    user.setAvatarUrl(imageUrl.toString());
+                    userRepository.save(user);
+                    userElkService.saveOrUpdateUser(user);
+                }
+            }catch (Exception e){
+                return ResponseBuilder.badRequestResponse(
+                        MessageResponseEnum.UPDATE_USER_AVATAR_FAILED.getMessage(),
+                        ResponseCodeEnum.UPDATEUSER0200);
+            }
+
+            return ResponseBuilder.okResponse(
+                    MessageResponseEnum.UPDATE_USER_AVATAR_SUCCESS.getMessage(),
+                    null,
+                    ResponseCodeEnum.UPDATEUSERAVATAR1200
+            );
+
+        } catch (Exception e) {
+            return ResponseBuilder.badRequestResponse(
+                    MessageResponseEnum.UPDATE_USER_AVATAR_FAILED.getMessage(),
+                    ResponseCodeEnum.UPDATEUSER0200);
         }
     }
 }

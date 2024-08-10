@@ -10,11 +10,10 @@ import org.springframework.beans.factory.annotation.Value;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {
-    @Value("${avatar.base-url}")
-    String avatarBaseUrl = "";
+    String avatarBaseUrl = "https://res.cloudinary.com/daxhouput/image/upload/v1723019192/samples/dessert-on-a-plate.jpg";
 
     @Mapping(target = "points", constant = "0")
-    @Mapping(target = "avatarLink", constant = avatarBaseUrl)
+    @Mapping(target = "avatarUrl", constant = avatarBaseUrl)
     UserInfoModel toUserInfoModel(UserRegisterRequest userRegisterRequest);
     UserElkModel toUserElkModel(UserInfoModel userInfoModel);
     @Mapping(target = "joinDate", source = "createdAt")

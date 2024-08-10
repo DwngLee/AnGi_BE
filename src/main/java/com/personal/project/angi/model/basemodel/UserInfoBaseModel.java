@@ -1,7 +1,6 @@
 package com.personal.project.angi.model.basemodel;
 
 import com.personal.project.angi.enums.AccountStateEnum;
-import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
@@ -26,11 +25,11 @@ public class UserInfoBaseModel {
 
     private String email;
 
-    private String avatarLink;
+    private String avatarUrl;
 
-    private String facebookLink;
+    private String facebookUrl;
 
-    private String instagramLink;
+    private String instagramUrl;
 
     private String ward;
 
