@@ -1,8 +1,10 @@
 package com.personal.project.angi.mapping;
 
+import com.personal.project.angi.model.basemodel.UserElkBaseModel;
 import com.personal.project.angi.model.dto.request.UserRegisterRequest;
 import com.personal.project.angi.model.dto.request.UserUpdateInfoRequest;
 import com.personal.project.angi.model.dto.response.UserInfoResponse;
+import com.personal.project.angi.model.dto.response.UserSearchResponse;
 import com.personal.project.angi.model.enity.UserElkModel;
 import com.personal.project.angi.model.enity.UserInfoModel;
 import org.mapstruct.Mapper;
@@ -21,6 +23,7 @@ public interface UserMapper {
     @Mapping(target = "joinDate", source = "createdAt")
     UserInfoResponse toUserInfoResponse(UserInfoModel userInfoModel);
     void updateUserInfoModel(@MappingTarget UserInfoModel userInfoModel, UserUpdateInfoRequest userUpdateInfoRequest);
+    UserSearchResponse toUserSearchResponse(UserElkBaseModel userElkModel);
 }
 
 

@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
 
-public class BoundingBoxCalculator {
+public class BoundingBoxCalculatorUtil {
     // Earth radius in kilometers
     private static final BigDecimal EARTH_RADIUS = new BigDecimal("6371.0");
     private static final MathContext MATH_CONTEXT = new MathContext(15, RoundingMode.HALF_UP);

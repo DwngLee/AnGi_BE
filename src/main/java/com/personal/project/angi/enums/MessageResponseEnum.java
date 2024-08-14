@@ -16,6 +16,10 @@ public enum MessageResponseEnum {
     UPDATE_USER_AVATAR_SUCCESS("Update user avatar successfully"),
     UPDATE_USER_AVATAR_FAILED("Update user avatar failed"),
 
+    //Search user
+    SEARCH_USER_SUCCESS("Search user successfully"),
+    SEARCH_USER_FAILED("Search user failed"),
+
     //Update user info
     UPDATE_USER_INFO_SUCCESS("Update user info successfully"),
     UPDATE_USER_INFO_FAILED("Update user info failed");

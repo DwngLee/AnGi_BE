@@ -46,8 +46,6 @@ public class RestaurantBaseModel {
 
     private RestaurantStateEnum restaurantState;
 
-    private LocalDate timeAdded;
-
     private Boolean hasAnOwner;
 
     private Boolean offerDelivery;
@@ -57,6 +55,7 @@ public class RestaurantBaseModel {
     private Boolean outdoorSeating;
 
     private String userAddId;
+    private String userUpdateId;
 
     private List<OpenTimeBaseModel> openTimeBaseModelList;
 

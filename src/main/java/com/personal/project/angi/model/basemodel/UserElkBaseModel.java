@@ -1,31 +1,21 @@
 package com.personal.project.angi.model.basemodel;
 
 import lombok.Data;
-import lombok.experimental.FieldDefaults;
-import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.mongodb.core.mapping.Field;
-
-import java.time.LocalDateTime;
+import org.springframework.data.elasticsearch.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.FieldType;
 
 @Data
 public class UserElkBaseModel {
     @Id
     private String id;
 
+    @Field(type = FieldType.Text)
     private String name;
 
+    @Field(type = FieldType.Text)
     private String city;
 
+    @Field(type = FieldType.Keyword)
     private String avatarUrl;
-
-    @Field("createdAt")
-    @CreatedDate
-    private LocalDateTime createdAt;
-
-    @Field("updatedAt")
-    @LastModifiedDate
-    private LocalDateTime updatedAt;
-
 }

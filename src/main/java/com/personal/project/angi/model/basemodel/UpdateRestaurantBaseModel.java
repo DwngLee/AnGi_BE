@@ -46,11 +46,7 @@ public class UpdateRestaurantBaseModel {
 
     private RestaurantStateEnum restaurantState;
 
-    private LocalDateTime updateTime;
-
     private UpdateStateEnum updateState;
-
-    private LocalDateTime reviewUpdateTime;
 
     private Boolean offerDelivery;
 
