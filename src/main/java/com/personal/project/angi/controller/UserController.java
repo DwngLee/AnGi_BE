@@ -4,9 +4,8 @@ import com.personal.project.angi.model.dto.ResponseDto;
 import com.personal.project.angi.model.dto.request.UserUpdateInfoRequest;
 import com.personal.project.angi.model.dto.response.UserInfoResponse;
 import com.personal.project.angi.model.dto.response.UserSearchResponse;
-import com.personal.project.angi.service.UserService;
+import com.personal.project.angi.service.UserInfoService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,16 +17,16 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 public class UserController {
-    private final UserService userService;
+    private final UserInfoService userInfoService;
     @GetMapping("/{userId}")
     public ResponseEntity<ResponseDto<UserInfoResponse>> getUserInfo(@PathVariable String userId) {
-        return userService.getUserInfo(userId);
+        return userInfoService.getUserInfo(userId);
     }
 
     @PatchMapping("/{userId}")
     public ResponseEntity<ResponseDto<UserInfoResponse>> updateUserInfo(@PathVariable String userId,
                                                                         @RequestBody UserUpdateInfoRequest userInfoRequest) {
-        return userService.updateUserInfo(userId, userInfoRequest);
+        return userInfoService.updateUserInfo(userId, userInfoRequest);
     }
 
     @PostMapping(value = "/{userId}/avatar",
@@ -35,7 +34,7 @@ public class UserController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseDto<Void>> updateUserAvatar(@PathVariable String userId,
                                                               @RequestParam MultipartFile file) {
-        return userService.updateUserAvatar(userId, file);
+        return userInfoService.updateUserAvatar(userId, file);
     }
 
     @GetMapping("/search")
@@ -46,6 +45,6 @@ public class UserController {
                                                                             @RequestParam(required = false) String filter) {
         pageNo = pageNo < 0 ? 0 : pageNo;
         pageSize = pageSize <= 0 ? 10 : pageSize;
-        return userService.searchUser(pageNo, pageSize, keyword, sort, filter);
+        return userInfoService.searchUser(pageNo, pageSize, keyword, sort, filter);
     }
 }

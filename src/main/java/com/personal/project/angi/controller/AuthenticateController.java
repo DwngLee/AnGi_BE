@@ -1,7 +1,10 @@
 package com.personal.project.angi.controller;
 
 import com.personal.project.angi.model.dto.ResponseDto;
+import com.personal.project.angi.model.dto.request.RefreshTokenRequest;
+import com.personal.project.angi.model.dto.request.UserLoginRequest;
 import com.personal.project.angi.model.dto.request.UserRegisterRequest;
+import com.personal.project.angi.model.dto.response.JwtResponse;
 import com.personal.project.angi.service.AuthenticateService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -21,5 +24,22 @@ public class AuthenticateController {
     public ResponseEntity<ResponseDto<Void>> register(@RequestBody UserRegisterRequest request){
         return authenticateService.register(request);
     }
+
+    @PostMapping("/login")
+    public ResponseEntity<ResponseDto<JwtResponse>> login(@RequestBody UserLoginRequest request){
+        return authenticateService.login(request);
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<ResponseDto<Void>> login(){
+        return authenticateService.logout();
+    }
+
+
+    @PostMapping("/refresh")
+    public ResponseEntity<ResponseDto<JwtResponse>> refresh(@RequestBody RefreshTokenRequest refreshTokenRequest){
+        return authenticateService.refreshToken(refreshTokenRequest.getRefreshToken());
+    }
+
 
 }

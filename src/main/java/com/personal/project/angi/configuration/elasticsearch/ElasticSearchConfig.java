@@ -16,8 +16,6 @@ public class ElasticSearchConfig {
     private String ELK_HOST;
     @Value("${spring.data.elasticsearch.port}")
     private  int ELK_PORT;
-    @Value("${jwt.signerKey}")
-    private String temp;
 
     //connect to elk
     @Bean

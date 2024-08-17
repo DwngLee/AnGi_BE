@@ -12,7 +12,7 @@ spring:
     redis:
       host: ${REDIS_HOST}
       port: ${REDIS_PORT}
-      master: ${REDIS_MASTER}
+      client-name: ${REDIS_CLIENT_NAME}
   servlet:
     multipart:
       enabled: true
@@ -43,9 +43,9 @@ cloudinary:
   api-secret: ${CLOUDINARY_API_SECRET}
 
 jwt:
-  signerKey: ${JWT_SIGNERKEY}
-  valid-duration: 10
-  refreshable-duration: 3600
+  signerKey: ${JWT_SIGNER_KEY}
+  access-expiration: 1209600000
+  refresh-expiration: 1209600000
 
 avatar:
   base-url: ${AVATAR_BASE_URL}

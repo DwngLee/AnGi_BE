@@ -2,6 +2,7 @@ package com.personal.project.angi.util;
 
 import co.elastic.clients.elasticsearch._types.SortOrder;
 import com.personal.project.angi.constant.FileConstant;
+import com.personal.project.angi.constant.RedisConstant;
 import com.personal.project.angi.model.dto.request.FilterRequest;
 import com.personal.project.angi.model.dto.request.SortRequest;
 import lombok.experimental.UtilityClass;
@@ -69,5 +70,9 @@ public class Util {
             filterRequestList.add(filterRequest);
         }
         return filterRequestList;
+    }
+
+    public String generateRedisKey(String... arg) {
+        return String.join(RedisConstant.SEPERATOR, arg);
     }
 }

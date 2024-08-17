@@ -1,10 +1,26 @@
 package com.personal.project.angi.enums;
 
 import lombok.Getter;
-import org.springframework.web.bind.annotation.GetMapping;
 
 @Getter
 public enum ResponseCodeEnum {
+    //LOGIN
+    LOGIN1200("LOGIN1200", "Login successfully"),
+    LOGIN0200("LOGIN0200", "Username or password is incorrect"),
+    LOGIN0201("LOGIN0201", "Generate token failed"),
+
+    //LOGOUT
+    LOGOUT1200("LOGOUT1200", "Logout successfully"),
+    LOGOUT0200("LOGOUT0200", "Logout failed"),
+    LOGOUT0201("LOGOUT0201", "Cant find the token"),
+
+    //REFRESH TOKEN
+    REFRESHTOKEN1200("REFRESHTOKEN1200", "Refresh token successfully"),
+    REFRESHTOKEN0200("REFRESHTOKEN0200", "Refresh token failed"),
+    REFRESHTOKEN0201("REFRESHTOKEN0201", "Refresh token is expired or has been revoked"),
+    REFRESHTOKEN0202("REFRESHTOKEN0202", "User not found"),
+    REFRESHTOKEN0203("REFRESHTOKEN0203", "Generate new token failed"),
+
     //CREATE USER
     USER1200("USER1200", "User created successfully"),
     USER0200("USER0200", "Username already exists"),
@@ -42,7 +58,8 @@ public enum ResponseCodeEnum {
     EXCEPTION0400("EXCEPTION0400", "Bad request"), // Bad request
     EXCEPTION0404("EXCEPTION0404", "Not found"), // Not found
     EXCEPTION0504("EXCEPTION0504", "Missing servlet request parameter"), //
-    EXCEPTION0505("EXCEPTION0505", "Access Denied/Not have permission"); //
+    EXCEPTION0505("EXCEPTION0505", "Access Denied/Not have permission");
+
 
     private final String code, message;
 
@@ -50,4 +67,4 @@ public enum ResponseCodeEnum {
         this.code = code;
         this.message = message;
     }
-}
+    }

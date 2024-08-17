@@ -24,12 +24,13 @@ import com.personal.project.angi.model.enity.UserInfoModel;
 import com.personal.project.angi.repository.UserRepository;
 import com.personal.project.angi.service.FileService;
 import com.personal.project.angi.service.UserElkService;
-import com.personal.project.angi.service.UserService;
+import com.personal.project.angi.service.UserInfoService;
 import com.personal.project.angi.util.Util;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -40,7 +41,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class UserServiceImpl implements UserService {
+public class UserInfoServiceImpl implements UserInfoService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final UserElkService userElkService;
@@ -162,6 +163,7 @@ public class UserServiceImpl implements UserService {
                                                                           String sort,
                                                                           String filter) {
        try{
+                Object temp = SecurityContextHolder.getContext().getAuthentication();
                BoolQuery.Builder boolQuery = new BoolQuery.Builder();
                List<SortOptions> sortOptions = new ArrayList<>();
                PageRequest pageRequest = PageRequest.of(pageNo, pageSize);

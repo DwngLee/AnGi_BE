@@ -1,7 +1,6 @@
 package com.personal.project.angi.service;
 
 import com.personal.project.angi.model.dto.ResponseDto;
-import com.personal.project.angi.model.dto.request.UpdateUserAvatarRequest;
 import com.personal.project.angi.model.dto.request.UserUpdateInfoRequest;
 import com.personal.project.angi.model.dto.response.UserInfoResponse;
 import com.personal.project.angi.model.dto.response.UserSearchResponse;
@@ -10,7 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
-public interface UserService {
+public interface UserInfoService {
     ResponseEntity<ResponseDto<UserInfoResponse>> getUserInfo(String userId);
 
     ResponseEntity<ResponseDto<UserInfoResponse>> updateUserInfo(String userId, UserUpdateInfoRequest userInfoRequest);
