@@ -12,8 +12,9 @@ import java.util.List;
 public interface UserInfoService {
     ResponseEntity<ResponseDto<UserInfoResponse>> getUserInfo(String userId);
 
-    ResponseEntity<ResponseDto<UserInfoResponse>> updateUserInfo(String userId, UserUpdateInfoRequest userInfoRequest);
+    ResponseEntity<ResponseDto<UserInfoResponse>> updateUserInfo(UserUpdateInfoRequest userInfoRequest);
 
-    ResponseEntity<ResponseDto<Void>> updateUserAvatar(String userId, MultipartFile file);
+    ResponseEntity<ResponseDto<Void>> updateUserAvatar(MultipartFile file);
+
     ResponseEntity<ResponseDto<List<UserSearchResponse>>> searchUser(int pageNo, int pageSize, String keyword, String sort, String filter);
 }

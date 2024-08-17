@@ -18,23 +18,24 @@ import java.util.List;
 @RestController
 public class UserController {
     private final UserInfoService userInfoService;
+
     @GetMapping("/{userId}")
     public ResponseEntity<ResponseDto<UserInfoResponse>> getUserInfo(@PathVariable String userId) {
         return userInfoService.getUserInfo(userId);
     }
 
-    @PatchMapping("/{userId}")
-    public ResponseEntity<ResponseDto<UserInfoResponse>> updateUserInfo(@PathVariable String userId,
-                                                                        @RequestBody UserUpdateInfoRequest userInfoRequest) {
-        return userInfoService.updateUserInfo(userId, userInfoRequest);
+    @PatchMapping("/myInfo")
+    public ResponseEntity<ResponseDto<UserInfoResponse>> updateUserInfo(
+            @RequestBody UserUpdateInfoRequest userInfoRequest) {
+        return userInfoService.updateUserInfo(userInfoRequest);
     }
 
-    @PostMapping(value = "/{userId}/avatar",
+    @PostMapping(value = "/myInfo/avatar",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResponseDto<Void>> updateUserAvatar(@PathVariable String userId,
-                                                              @RequestParam MultipartFile file) {
-        return userInfoService.updateUserAvatar(userId, file);
+    public ResponseEntity<ResponseDto<Void>> updateUserAvatar(
+            @RequestParam MultipartFile file) {
+        return userInfoService.updateUserAvatar(file);
     }
 
     @GetMapping("/search")

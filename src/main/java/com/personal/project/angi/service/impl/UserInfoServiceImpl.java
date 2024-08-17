@@ -8,6 +8,7 @@ import co.elastic.clients.elasticsearch._types.query_dsl.MultiMatchQuery;
 import co.elastic.clients.elasticsearch._types.query_dsl.RangeQuery;
 import co.elastic.clients.elasticsearch._types.query_dsl.TermQuery;
 import co.elastic.clients.json.JsonData;
+import com.personal.project.angi.configuration.security.UserDetailsImpl;
 import com.personal.project.angi.constant.UploadConstant;
 import com.personal.project.angi.enums.MessageResponseEnum;
 import com.personal.project.angi.enums.ResponseCodeEnum;
@@ -69,18 +70,18 @@ public class UserInfoServiceImpl implements UserInfoService {
     }
 
     @Override
-    public ResponseEntity<ResponseDto<UserInfoResponse>> updateUserInfo(String userId, UserUpdateInfoRequest userInfoRequest) {
+    public ResponseEntity<ResponseDto<UserInfoResponse>> updateUserInfo(UserUpdateInfoRequest userInfoRequest) {
         try {
-            Optional<UserInfoModel> userInfoModel = userRepository.findById(userId);
-            if (userInfoModel.isEmpty()) {
+            UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            UserInfoModel userInfoModel = userDetails.getUser();
+            if (userInfoModel == null) {
                 return ResponseBuilder.badRequestResponse(
                         MessageResponseEnum.UPDATE_USER_INFO_FAILED.getMessage(),
                         ResponseCodeEnum.UPDATEUSER0200);
             }
-            UserInfoModel userInfo = userInfoModel.get();
 
             try {
-                userMapper.updateUserInfoModel(userInfo, userInfoRequest);
+                userMapper.updateUserInfoModel(userInfoModel, userInfoRequest);
             } catch (Exception e) {
                 return ResponseBuilder.badRequestResponse(
                         MessageResponseEnum.UPDATE_USER_INFO_FAILED.getMessage(),
@@ -88,8 +89,8 @@ public class UserInfoServiceImpl implements UserInfoService {
             }
 
             try {
-                userRepository.save(userInfo);
-                userElkService.saveOrUpdateUser(userInfo);
+                userRepository.save(userInfoModel);
+                userElkService.saveOrUpdateUser(userInfoModel);
             } catch (Exception e) {
                 return ResponseBuilder.badRequestResponse(
                         MessageResponseEnum.UPDATE_USER_INFO_FAILED.getMessage(),
@@ -98,7 +99,7 @@ public class UserInfoServiceImpl implements UserInfoService {
 
             return ResponseBuilder.okResponse(
                     MessageResponseEnum.UPDATE_USER_INFO_SUCCESS.getMessage(),
-                    userMapper.toUserInfoResponse(userInfo),
+                    userMapper.toUserInfoResponse(userInfoModel),
                     ResponseCodeEnum.UPDATEUSER1200
             );
 
@@ -110,19 +111,19 @@ public class UserInfoServiceImpl implements UserInfoService {
     }
 
     @Override
-    public ResponseEntity<ResponseDto<Void>> updateUserAvatar(String userId, MultipartFile file) {
+    public ResponseEntity<ResponseDto<Void>> updateUserAvatar(MultipartFile file) {
         try {
-            Optional<UserInfoModel> userInfoModel = userRepository.findById(userId);
-            if (userInfoModel.isEmpty()) {
+            UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            UserInfoModel userInfoModel = userDetails.getUser();
+            if (userInfoModel == null) {
                 return ResponseBuilder.badRequestResponse(
                         MessageResponseEnum.UPDATE_USER_AVATAR_FAILED.getMessage(),
                         ResponseCodeEnum.UPDATEUSER0200);
             }
-
             Map imageUrl = null;
             if (file != null) {
                 try {
-                    imageUrl = fileService.uploadFile(file, userId, UploadConstant.USER_AVATAR);
+                    imageUrl = fileService.uploadFile(file, userInfoModel.getId(), UploadConstant.USER_AVATAR);
                 } catch (Exception e) {
                     return ResponseBuilder.badRequestResponse(
                             MessageResponseEnum.UPDATE_USER_AVATAR_FAILED.getMessage(),
@@ -131,13 +132,12 @@ public class UserInfoServiceImpl implements UserInfoService {
             }
 
             try {
-                UserInfoModel user = userInfoModel.get();
                 if (file != null) {
-                    user.setAvatarUrl(imageUrl.toString());
-                    userRepository.save(user);
-                    userElkService.saveOrUpdateUser(user);
+                    userInfoModel.setAvatarUrl(imageUrl.toString());
+                    userRepository.save(userInfoModel);
+                    userElkService.saveOrUpdateUser(userInfoModel);
                 }
-            }catch (Exception e){
+            } catch (Exception e) {
                 return ResponseBuilder.badRequestResponse(
                         MessageResponseEnum.UPDATE_USER_AVATAR_FAILED.getMessage(),
                         ResponseCodeEnum.UPDATEUSER0200);
@@ -158,83 +158,83 @@ public class UserInfoServiceImpl implements UserInfoService {
 
     @Override
     public ResponseEntity<ResponseDto<List<UserSearchResponse>>> searchUser(int pageNo,
-                                                                          int pageSize,
-                                                                          String keyword,
-                                                                          String sort,
-                                                                          String filter) {
-       try{
-                Object temp = SecurityContextHolder.getContext().getAuthentication();
-               BoolQuery.Builder boolQuery = new BoolQuery.Builder();
-               List<SortOptions> sortOptions = new ArrayList<>();
-               PageRequest pageRequest = PageRequest.of(pageNo, pageSize);
+                                                                            int pageSize,
+                                                                            String keyword,
+                                                                            String sort,
+                                                                            String filter) {
+        try {
+            Object temp = SecurityContextHolder.getContext().getAuthentication();
+            BoolQuery.Builder boolQuery = new BoolQuery.Builder();
+            List<SortOptions> sortOptions = new ArrayList<>();
+            PageRequest pageRequest = PageRequest.of(pageNo, pageSize);
 
-               //#Todo: Refactor code to reduce boiler code
-               if (keyword != null && !keyword.isEmpty()) {
-                   boolQuery.must(MultiMatchQuery.of(m -> m
-                                   .query(keyword))
-                           ._toQuery());
-               }
+            //#Todo: Refactor code to reduce boiler code
+            if (keyword != null && !keyword.isEmpty()) {
+                boolQuery.must(MultiMatchQuery.of(m -> m
+                                .query(keyword))
+                        ._toQuery());
+            }
 
-               //get sort options
-               if (sort != null && !sort.isEmpty()) {
-                   List<SortRequest> sortRequestList = Util.parseSortRequest(sort);
-                   for (SortRequest sortRequest : sortRequestList) {
-                       String sortField = sortRequest.getSortField();
-                       sortOptions.add(new SortOptions.Builder()
-                               .field(new FieldSort.Builder()
-                                       .field(sortField)
-                                       .order(sortRequest.getSortDirection())
-                                       .build())
-                               .build());
-                   }
-               }
+            //get sort options
+            if (sort != null && !sort.isEmpty()) {
+                List<SortRequest> sortRequestList = Util.parseSortRequest(sort);
+                for (SortRequest sortRequest : sortRequestList) {
+                    String sortField = sortRequest.getSortField();
+                    sortOptions.add(new SortOptions.Builder()
+                            .field(new FieldSort.Builder()
+                                    .field(sortField)
+                                    .order(sortRequest.getSortDirection())
+                                    .build())
+                            .build());
+                }
+            }
 
-               //get filter options
-               if (filter != null && !filter.isEmpty()) {
-                   List<FilterRequest> filterRequestList = Util.parseFilterRequest(filter);
-                   for (FilterRequest filterRequest : filterRequestList) {
-                       switch (filterRequest.getFilterOperations()) {
-                           case "gte" -> boolQuery.filter(RangeQuery.of(r -> r
-                                           .field(filterRequest.getFilterField())
-                                           .gte(JsonData.of(filterRequest.getFliterValue())))
-                                   ._toQuery());
-                           case "lte" -> boolQuery.filter(RangeQuery.of(r -> r
-                                           .field(filterRequest.getFilterField())
-                                           .lte(JsonData.of(filterRequest.getFliterValue())))
-                                   ._toQuery());
-                           case "eq" -> boolQuery.filter(TermQuery.of(t -> t
-                                           .field(filterRequest.getFilterField())
-                                           .value(FieldValue.of(filterRequest.getFliterValue())))
-                                   ._toQuery());
-                       }
-                   }
-               }
+            //get filter options
+            if (filter != null && !filter.isEmpty()) {
+                List<FilterRequest> filterRequestList = Util.parseFilterRequest(filter);
+                for (FilterRequest filterRequest : filterRequestList) {
+                    switch (filterRequest.getFilterOperations()) {
+                        case "gte" -> boolQuery.filter(RangeQuery.of(r -> r
+                                        .field(filterRequest.getFilterField())
+                                        .gte(JsonData.of(filterRequest.getFliterValue())))
+                                ._toQuery());
+                        case "lte" -> boolQuery.filter(RangeQuery.of(r -> r
+                                        .field(filterRequest.getFilterField())
+                                        .lte(JsonData.of(filterRequest.getFliterValue())))
+                                ._toQuery());
+                        case "eq" -> boolQuery.filter(TermQuery.of(t -> t
+                                        .field(filterRequest.getFilterField())
+                                        .value(FieldValue.of(filterRequest.getFliterValue())))
+                                ._toQuery());
+                    }
+                }
+            }
 
-           try{
-               Page<UserSearchResponse> userSearchResponses = userElkService.searchUser(boolQuery.build(),
-                       sortOptions,
-                       pageRequest);
+            try {
+                Page<UserSearchResponse> userSearchResponses = userElkService.searchUser(boolQuery.build(),
+                        sortOptions,
+                        pageRequest);
 
-               MetaData metaData = MetaData.builder()
-                       .totalPage(userSearchResponses.getTotalPages())
-                       .currentPage(userSearchResponses.getNumber())
-                       .pageSize(userSearchResponses.getSize())
-                       .build();
+                MetaData metaData = MetaData.builder()
+                        .totalPage(userSearchResponses.getTotalPages())
+                        .currentPage(userSearchResponses.getNumber())
+                        .pageSize(userSearchResponses.getSize())
+                        .build();
 
-               return ResponseBuilder.okResponse(
-                       MessageResponseEnum.SEARCH_USER_SUCCESS.getMessage(),
-                       userSearchResponses.getContent(),
-                       ResponseCodeEnum.SEARCHUSER1200,
-                       metaData);
-           }catch (Exception e){
+                return ResponseBuilder.okResponse(
+                        MessageResponseEnum.SEARCH_USER_SUCCESS.getMessage(),
+                        userSearchResponses.getContent(),
+                        ResponseCodeEnum.SEARCHUSER1200,
+                        metaData);
+            } catch (Exception e) {
                 return ResponseBuilder.badRequestResponse(
-                          MessageResponseEnum.SEARCH_USER_FAILED.getMessage(),
-                          ResponseCodeEnum.GETUSER0201);
-           }
-       }catch (Exception e){
-              return ResponseBuilder.badRequestResponse(
-                     MessageResponseEnum.SEARCH_USER_FAILED.getMessage(),
-                     ResponseCodeEnum.SEARCHUSER0200);
-       }
+                        MessageResponseEnum.SEARCH_USER_FAILED.getMessage(),
+                        ResponseCodeEnum.GETUSER0201);
+            }
+        } catch (Exception e) {
+            return ResponseBuilder.badRequestResponse(
+                    MessageResponseEnum.SEARCH_USER_FAILED.getMessage(),
+                    ResponseCodeEnum.SEARCHUSER0200);
+        }
     }
 }
