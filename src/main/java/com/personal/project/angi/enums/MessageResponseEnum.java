@@ -35,7 +35,33 @@ public enum MessageResponseEnum {
 
     //Update user info
     UPDATE_USER_INFO_SUCCESS("Update user info successfully"),
-    UPDATE_USER_INFO_FAILED("Update user info failed");
+    UPDATE_USER_INFO_FAILED("Update user info failed"),
+
+    //Create restaurant
+    CREATE_RESTAURANT_SUCCESS("Create restaurant successfully"),
+    CREATE_RESTAURANT_FAILED("Create restaurant failed"),
+
+    //Create tag
+    CREATE_TAG_SUCCESS("Create tag successfully"),
+    CREATE_TAG_FAILED("Create tag failed"),
+
+    //Delete tag
+    DELETE_TAG_SUCCESS("Delete tag successfully"),
+    DELETE_TAG_FAILED("Delete tag failed"),
+
+    //Update tag
+    UPDATE_TAG_SUCCESS("Update tag successfully"),
+    UPDATE_TAG_FAILED("Update tag failed"),
+
+    //Get tag
+    GET_TAG_SUCCESS("Get tag successfully"),
+    GET_TAG_FAILED("Get tag failed"),
+
+    //Get all tag
+    GET_ALL_TAGS_SUCCESS("Get all tag successfully"),
+    GET_ALL_TAGS_FAILED("Get all tag failed"),
+
+    ;
 
     private final String message;
 
