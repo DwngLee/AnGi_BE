@@ -10,6 +10,7 @@ import com.personal.project.angi.mapping.TagMapper;
 import com.personal.project.angi.mapping.UserMapper;
 import com.personal.project.angi.model.dto.ResponseDto;
 import com.personal.project.angi.model.dto.request.RestaurantCreationRequest;
+import com.personal.project.angi.model.dto.request.RestaurantUpdateRequest;
 import com.personal.project.angi.model.dto.response.RestaurantResponse;
 import com.personal.project.angi.model.enity.RestaurantElkModel;
 import com.personal.project.angi.model.enity.RestaurantModel;
@@ -18,17 +19,20 @@ import com.personal.project.angi.model.enity.UserInfoModel;
 import com.personal.project.angi.repository.RestaurantRepository;
 import com.personal.project.angi.service.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class RestaurantServiceImpl implements RestaurantService {
     private final RestaurantMapper restaurantMapper;
     private final RestaurantRepository restaurantRepository;
@@ -152,6 +156,54 @@ public class RestaurantServiceImpl implements RestaurantService {
         }
     }
 
+    @Override
+    public ResponseEntity<ResponseDto<Void>> updateRestaurant(String id, RestaurantUpdateRequest newData) {
+        try {
+            UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            if (userDetails == null) {
+                return ResponseBuilder.badRequestResponse(
+                        MessageResponseEnum.UPDATE_RESTAURANT_FAILED.getMessage(),
+                        ResponseCodeEnum.UPDATERESTAURANT0201);
+            }
+            UserInfoModel userUpdate = userDetails.getUser();
+            RestaurantModel oldData = restaurantRepository.findByIdAndRestaurantStateIs(id, "ACTIVE");
+            if (oldData == null) {
+                return ResponseBuilder.badRequestResponse(
+                        MessageResponseEnum.UPDATE_RESTAURANT_FAILED.getMessage(),
+                        ResponseCodeEnum.UPDATERESTAURANT0202);
+            }
+            List<TagModel> tagList = getTagModelList(newData.getTagIdList());
+            RestaurantModel newRestaurantData = null;
+            try {
+                newRestaurantData =  migrateRestaurantData(newData, oldData, userUpdate);
+            } catch (Exception e) {
+                return ResponseBuilder.badRequestResponse(
+                        MessageResponseEnum.UPDATE_RESTAURANT_FAILED.getMessage(),
+                        ResponseCodeEnum.UPDATERESTAURANT0203);
+            }
+
+            RestaurantElkModel restaurantElkModel = restaurantMapper.toRestaurantElkModel(newRestaurantData);
+            restaurantElkModel.setTagBaseModelList(tagList);
+
+            try{
+                restaurantRepository.save(newRestaurantData);
+                restaurantElkService.saveOrUpdateRestaurant(restaurantElkModel);
+                return ResponseBuilder.okResponse(
+                        MessageResponseEnum.UPDATE_RESTAURANT_SUCCESS.getMessage(),
+                        ResponseCodeEnum.UPDATERESTAURANT1200);
+            } catch (Exception e) {
+                return ResponseBuilder.badRequestResponse(
+                        MessageResponseEnum.UPDATE_RESTAURANT_FAILED.getMessage(),
+                        ResponseCodeEnum.UPDATERESTAURANT0204);
+            }
+
+        } catch (Exception e) {
+            return ResponseBuilder.badRequestResponse(
+                    MessageResponseEnum.UPDATE_RESTAURANT_FAILED.getMessage(),
+                    ResponseCodeEnum.UPDATERESTAURANT0200);
+        }
+    }
+
 
     private List<TagModel> getTagModelList(List<String> tagIdList) {
         List<TagModel> tagList = new ArrayList<>();
@@ -162,5 +214,21 @@ public class RestaurantServiceImpl implements RestaurantService {
             }
         }
         return tagList;
+    }
+
+    private RestaurantModel migrateRestaurantData(RestaurantUpdateRequest newData, RestaurantModel oldData, UserInfoModel userUpdate) {
+        try {
+            RestaurantModel newRestaurant = restaurantMapper.toRestaurantModel(newData);
+            newRestaurant.setId(oldData.getId());
+            newRestaurant.setUserAddId(oldData.getUserAddId());
+            newRestaurant.setUserUpdateId(userUpdate.getId());
+            newRestaurant.setRestaurantImageUrlList(oldData.getRestaurantImageUrlList());
+            newRestaurant.setCreatedAt(oldData.getCreatedAt());
+            newRestaurant.setUpdatedAt(LocalDateTime.now());
+            return newRestaurant;
+        } catch (Exception e) {
+            log.error("Error when migrate data", e);
+            throw e;
+        }
     }
 }

@@ -90,6 +90,14 @@ public enum ResponseCodeEnum {
     GETRESTAURANT0203("GETRESTAURANT0203", "Cannot find the user who updated the restaurant"),
     GETRESTAURANT0204("GETRESTAURANT0204", "Error when mapping to restaurant response"),
 
+    //UPDATE RESTAURANT
+    UPDATERESTAURANT1200("UPDATERESTAURANT1200", "Update restaurant successfully"),
+    UPDATERESTAURANT0200("UPDATERESTAURANT0200", "Update restaurant failed"),
+    UPDATERESTAURANT0201("UPDATERESTAURANT0201", "Cannot find the user update"),
+    UPDATERESTAURANT0202("UPDATERESTAURANT0202", "Cannot find the restaurant to update"),
+    UPDATERESTAURANT0203("UPDATERESTAURANT0203", "Failed when migrate data"),
+    UPDATERESTAURANT0204("UPDATERESTAURANT0204", "Failed when save data into database"),
+
     //GENERAL
     EXCEPTION("EXCEPTION", "Uncatagory Exception"),
     EXCEPTION0400("EXCEPTION0400", "Bad request"), // Bad request

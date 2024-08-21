@@ -65,6 +65,10 @@ public enum MessageResponseEnum {
     GET_RESTAURANT_SUCCESS("Get restaurant info successfully"),
     GET_RESTAURANT_FAILED("Get restaurant info failed"),
 
+    //Update restaurant
+    UPDATE_RESTAURANT_SUCCESS("Update restaurant successfully"),
+    UPDATE_RESTAURANT_FAILED("Update restaurant failed")
+
     ;
 
     private final String message;

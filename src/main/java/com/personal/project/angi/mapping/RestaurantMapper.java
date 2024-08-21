@@ -2,6 +2,7 @@ package com.personal.project.angi.mapping;
 
 import com.personal.project.angi.enums.RestaurantStateEnum;
 import com.personal.project.angi.model.dto.request.RestaurantCreationRequest;
+import com.personal.project.angi.model.dto.request.RestaurantUpdateRequest;
 import com.personal.project.angi.model.dto.response.RestaurantResponse;
 import com.personal.project.angi.model.enity.RestaurantElkModel;
 import com.personal.project.angi.model.enity.RestaurantModel;
@@ -17,8 +18,11 @@ public interface RestaurantMapper {
     @Mapping(target = "restaurantState", constant = "ACTIVE")
     @Mapping(target = "hasAnOwner", constant = "false")
     @Mapping(target = "openTimeBaseModelList", source = "openTimeList")
-
     RestaurantModel toRestaurantModel(RestaurantCreationRequest request);
+
+    @Mapping(target = "restaurantState", constant = "ACTIVE")
+    @Mapping(target = "openTimeBaseModelList", source = "openTimeList")
+    RestaurantModel toRestaurantModel(RestaurantUpdateRequest restaurantUpdateRequest);
 
     @Mapping(target = "openTimeList", source = "openTimeBaseModelList")
     RestaurantResponse toRestaurantResponse(RestaurantModel model);

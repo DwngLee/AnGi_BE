@@ -2,6 +2,7 @@ package com.personal.project.angi.controller;
 
 import com.personal.project.angi.model.dto.ResponseDto;
 import com.personal.project.angi.model.dto.request.RestaurantCreationRequest;
+import com.personal.project.angi.model.dto.request.RestaurantUpdateRequest;
 import com.personal.project.angi.model.dto.response.RestaurantResponse;
 import com.personal.project.angi.service.RestaurantService;
 import lombok.RequiredArgsConstructor;
@@ -24,5 +25,10 @@ public class RestaurantController {
     @GetMapping("/{id}")
     public ResponseEntity<ResponseDto<RestaurantResponse>> getRestaurantById(@PathVariable String id) {
         return restaurantService.getRestaurantById(id);
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<ResponseDto<Void>> updateRestaurant(@PathVariable String id, @RequestBody RestaurantUpdateRequest request) {
+        return restaurantService.updateRestaurant(id, request);
     }
 }
