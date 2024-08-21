@@ -61,6 +61,10 @@ public enum MessageResponseEnum {
     GET_ALL_TAGS_SUCCESS("Get all tag successfully"),
     GET_ALL_TAGS_FAILED("Get all tag failed"),
 
+    //Get restaurant info
+    GET_RESTAURANT_SUCCESS("Get restaurant info successfully"),
+    GET_RESTAURANT_FAILED("Get restaurant info failed"),
+
     ;
 
     private final String message;

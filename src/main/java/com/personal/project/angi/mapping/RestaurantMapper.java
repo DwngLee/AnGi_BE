@@ -14,7 +14,7 @@ import java.util.Locale;
 
 @Mapper(componentModel = "spring")
 public interface RestaurantMapper {
-    @Mapping(target = "restaurantState", constant = "PENDING")
+    @Mapping(target = "restaurantState", constant = "ACTIVE")
     @Mapping(target = "hasAnOwner", constant = "false")
     @Mapping(target = "openTimeBaseModelList", source = "openTimeList")
 

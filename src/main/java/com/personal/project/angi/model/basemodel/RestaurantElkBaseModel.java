@@ -1,6 +1,7 @@
 package com.personal.project.angi.model.basemodel;
 
 import com.personal.project.angi.enums.RestaurantStateEnum;
+import com.personal.project.angi.model.enity.TagModel;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Field;
@@ -50,7 +51,7 @@ public class RestaurantElkBaseModel {
     private List<OpenTimeBaseModel> openTimeBaseModelList;
 
     @Field(type = FieldType.Nested)
-    private List<TagBaseModel> tagBaseModelList;
+    private List<TagModel> tagBaseModelList;
 
     @Field(type = FieldType.Nested)
     private List<String> restaurantImageUrlList;

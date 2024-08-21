@@ -2,8 +2,6 @@ package com.personal.project.angi.model.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.personal.project.angi.enums.RestaurantStateEnum;
-import com.personal.project.angi.model.basemodel.OpenTimeBaseModel;
-import com.personal.project.angi.model.basemodel.TagBaseModel;
 import com.personal.project.angi.model.dto.OpenTimeDto;
 import lombok.Data;
 
@@ -51,9 +49,9 @@ public class RestaurantResponse {
 
     private Boolean outdoorSeating;
 
-    private UserInfoResponse userAdd;
+    private UserRestaurantResponse userAdd;
 
-    private UserInfoResponse userUpdate;
+    private UserRestaurantResponse userUpdate;
 
     @JsonProperty("openTimeList")
     private List<OpenTimeDto> openTimeList;
@@ -63,8 +61,8 @@ public class RestaurantResponse {
 
     private List<String> restaurantImageUrlList;
 
-    @JsonProperty("timeAdded")
-    private LocalDateTime createdDate;
+    @JsonProperty("updatedAt")
+    private LocalDateTime updatedAt;
 
     private double point;
 }

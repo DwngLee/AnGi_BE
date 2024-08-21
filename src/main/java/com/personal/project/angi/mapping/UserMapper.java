@@ -1,9 +1,11 @@
 package com.personal.project.angi.mapping;
 
 import com.personal.project.angi.model.basemodel.UserElkBaseModel;
+import com.personal.project.angi.model.basemodel.UserInfoBaseModel;
 import com.personal.project.angi.model.dto.request.UserRegisterRequest;
 import com.personal.project.angi.model.dto.request.UserUpdateInfoRequest;
 import com.personal.project.angi.model.dto.response.UserInfoResponse;
+import com.personal.project.angi.model.dto.response.UserRestaurantResponse;
 import com.personal.project.angi.model.dto.response.UserSearchResponse;
 import com.personal.project.angi.model.enity.UserElkModel;
 import com.personal.project.angi.model.enity.UserInfoModel;
@@ -30,6 +32,7 @@ public interface UserMapper {
     UserInfoResponse toUserInfoResponse(UserInfoModel userInfoModel);
     void updateUserInfoModel(@MappingTarget UserInfoModel userInfoModel, UserUpdateInfoRequest userUpdateInfoRequest);
     UserSearchResponse toUserSearchResponse(UserElkBaseModel userElkModel);
+    UserRestaurantResponse toUserRestaurantResponse(UserInfoModel userInfoModel);
 
     // Helper method to provide default roles
     default Set<String> getDefaultRoles() {

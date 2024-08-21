@@ -237,4 +237,9 @@ public class UserInfoServiceImpl implements UserInfoService {
                     ResponseCodeEnum.SEARCHUSER0200);
         }
     }
+
+    @Override
+    public UserInfoModel getUserModel(String userId) {
+        return userRepository.findById(userId).orElse(null);
+    }
 }

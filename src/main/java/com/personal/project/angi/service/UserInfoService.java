@@ -4,6 +4,7 @@ import com.personal.project.angi.model.dto.ResponseDto;
 import com.personal.project.angi.model.dto.request.UserUpdateInfoRequest;
 import com.personal.project.angi.model.dto.response.UserInfoResponse;
 import com.personal.project.angi.model.dto.response.UserSearchResponse;
+import com.personal.project.angi.model.enity.UserInfoModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,4 +18,6 @@ public interface UserInfoService {
     ResponseEntity<ResponseDto<Void>> updateUserAvatar(MultipartFile file);
 
     ResponseEntity<ResponseDto<List<UserSearchResponse>>> searchUser(int pageNo, int pageSize, String keyword, String sort, String filter);
+
+    UserInfoModel getUserModel(String userId);
 }

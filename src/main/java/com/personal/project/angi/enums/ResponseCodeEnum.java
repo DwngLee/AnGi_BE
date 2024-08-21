@@ -82,6 +82,14 @@ public enum ResponseCodeEnum {
     GETALLTAGS1200("GETALLTAGS1200", "Get all tag successfully"),
     GETALLTAGS0200("GETALLTAGS0200", "Get all tag failed"),
 
+    //GET RESTAURANT INFO
+    GETRESTAURANT1200("GETRESTAURANT1200", "Get restaurant info successfully"),
+    GETRESTAURANT0200("GETRESTAURANT0200", "Get restaurant info failed"),
+    GETRESTAURANT0201("GETRESTAURANT0201", "Cannot find the restaurant"),
+    GETRESTAURANT0202("GETRESTAURANT0202", "Cannot find the user who added the restaurant"),
+    GETRESTAURANT0203("GETRESTAURANT0203", "Cannot find the user who updated the restaurant"),
+    GETRESTAURANT0204("GETRESTAURANT0204", "Error when mapping to restaurant response"),
+
     //GENERAL
     EXCEPTION("EXCEPTION", "Uncatagory Exception"),
     EXCEPTION0400("EXCEPTION0400", "Bad request"), // Bad request
