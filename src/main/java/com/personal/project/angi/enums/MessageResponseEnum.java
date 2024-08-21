@@ -67,7 +67,11 @@ public enum MessageResponseEnum {
 
     //Update restaurant
     UPDATE_RESTAURANT_SUCCESS("Update restaurant successfully"),
-    UPDATE_RESTAURANT_FAILED("Update restaurant failed")
+    UPDATE_RESTAURANT_FAILED("Update restaurant failed"),
+
+    //Search restaurant
+    SEARCH_RESTAURANT_SUCCESS("Search restaurant successfully"),
+    SEARCH_RESTAURANT_FAILED("Search restaurant failed"),
 
     ;
 

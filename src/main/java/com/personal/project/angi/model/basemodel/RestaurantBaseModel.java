@@ -64,6 +64,8 @@ public class RestaurantBaseModel {
 
     private List<String> restaurantImageUrlList;
 
+    private double point;
+
     @Field("createdAt")
     @CreatedDate
     private LocalDateTime createdAt;

@@ -2,6 +2,7 @@ package com.personal.project.angi.service;
 
 import co.elastic.clients.elasticsearch._types.SortOptions;
 import co.elastic.clients.elasticsearch._types.query_dsl.BoolQuery;
+import com.personal.project.angi.model.dto.response.RestaurantSearchResponse;
 import com.personal.project.angi.model.dto.response.UserSearchResponse;
 import com.personal.project.angi.model.enity.RestaurantElkModel;
 import com.personal.project.angi.model.enity.RestaurantModel;
@@ -16,7 +17,7 @@ public interface RestaurantElkService {
 
     void deleteRestaurant(String id);
 
-    Page<UserSearchResponse> searchRestaurant(BoolQuery boolQuery,
-                                        List<SortOptions> sortOptions,
-                                        PageRequest pageRequest) throws IOException;
+    Page<RestaurantSearchResponse> searchRestaurant(BoolQuery boolQuery,
+                                                    List<SortOptions> sortOptions,
+                                                    PageRequest pageRequest) throws IOException;
 }

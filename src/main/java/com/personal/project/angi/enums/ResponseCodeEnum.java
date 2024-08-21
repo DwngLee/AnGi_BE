@@ -98,6 +98,11 @@ public enum ResponseCodeEnum {
     UPDATERESTAURANT0203("UPDATERESTAURANT0203", "Failed when migrate data"),
     UPDATERESTAURANT0204("UPDATERESTAURANT0204", "Failed when save data into database"),
 
+    //SEARCH RESTAURANT
+    SEARCHRESTAURANT1200("SEARCHRESTAURANT1200", "Search restaurant successfully"),
+    SEARCHRESTAURANT0200("SEARCHRESTAURANT0200", "Search restaurant failed"),
+    SEARCHRESTAURANT0201("SEARCHRESTAURANT0201", "Search restaurant from ELK failed"),
+
     //GENERAL
     EXCEPTION("EXCEPTION", "Uncatagory Exception"),
     EXCEPTION0400("EXCEPTION0400", "Bad request"), // Bad request

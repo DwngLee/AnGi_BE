@@ -1,5 +1,13 @@
 package com.personal.project.angi.service.impl;
 
+import co.elastic.clients.elasticsearch._types.FieldSort;
+import co.elastic.clients.elasticsearch._types.FieldValue;
+import co.elastic.clients.elasticsearch._types.SortOptions;
+import co.elastic.clients.elasticsearch._types.query_dsl.BoolQuery;
+import co.elastic.clients.elasticsearch._types.query_dsl.MultiMatchQuery;
+import co.elastic.clients.elasticsearch._types.query_dsl.RangeQuery;
+import co.elastic.clients.elasticsearch._types.query_dsl.TermQuery;
+import co.elastic.clients.json.JsonData;
 import com.personal.project.angi.configuration.security.UserDetailsImpl;
 import com.personal.project.angi.constant.UploadConstant;
 import com.personal.project.angi.enums.MessageResponseEnum;
@@ -8,19 +16,26 @@ import com.personal.project.angi.exception.response.ResponseBuilder;
 import com.personal.project.angi.mapping.RestaurantMapper;
 import com.personal.project.angi.mapping.TagMapper;
 import com.personal.project.angi.mapping.UserMapper;
+import com.personal.project.angi.model.dto.MetaData;
 import com.personal.project.angi.model.dto.ResponseDto;
+import com.personal.project.angi.model.dto.request.FilterRequest;
 import com.personal.project.angi.model.dto.request.RestaurantCreationRequest;
 import com.personal.project.angi.model.dto.request.RestaurantUpdateRequest;
+import com.personal.project.angi.model.dto.request.SortRequest;
 import com.personal.project.angi.model.dto.response.RestaurantResponse;
+import com.personal.project.angi.model.dto.response.RestaurantSearchResponse;
 import com.personal.project.angi.model.enity.RestaurantElkModel;
 import com.personal.project.angi.model.enity.RestaurantModel;
 import com.personal.project.angi.model.enity.TagModel;
 import com.personal.project.angi.model.enity.UserInfoModel;
 import com.personal.project.angi.repository.RestaurantRepository;
 import com.personal.project.angi.service.*;
+import com.personal.project.angi.util.Util;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -156,6 +171,7 @@ public class RestaurantServiceImpl implements RestaurantService {
         }
     }
 
+    //#TODO: Change to RestaurantUpdateBaseModel
     @Override
     public ResponseEntity<ResponseDto<Void>> updateRestaurant(String id, RestaurantUpdateRequest newData) {
         try {
@@ -174,6 +190,7 @@ public class RestaurantServiceImpl implements RestaurantService {
             }
             List<TagModel> tagList = getTagModelList(newData.getTagIdList());
             RestaurantModel newRestaurantData = null;
+
             try {
                 newRestaurantData =  migrateRestaurantData(newData, oldData, userUpdate);
             } catch (Exception e) {
@@ -204,6 +221,91 @@ public class RestaurantServiceImpl implements RestaurantService {
         }
     }
 
+    @Override
+    public ResponseEntity<ResponseDto<List<RestaurantSearchResponse>>> searchRestaurant(int pageNo,
+                                                                                        int pageSize,
+                                                                                        String keyword,
+                                                                                        String sort,
+                                                                                        String filter) {
+        try{
+            Object temp = SecurityContextHolder.getContext().getAuthentication();
+            BoolQuery.Builder boolQuery = new BoolQuery.Builder();
+            List<SortOptions> sortOptions = new ArrayList<>();
+            PageRequest pageRequest = PageRequest.of(pageNo, pageSize);
+
+            //#Todo: Refactor code to reduce boiler code
+            if (keyword != null && !keyword.isEmpty()) {
+                boolQuery.must(MultiMatchQuery.of(m -> m
+                                .query(keyword))
+                        ._toQuery());
+            }
+
+            //get sort options
+            if (sort != null && !sort.isEmpty()) {
+                List<SortRequest> sortRequestList = Util.parseSortRequest(sort);
+                for (SortRequest sortRequest : sortRequestList) {
+                    String sortField = sortRequest.getSortField();
+                    sortOptions.add(new SortOptions.Builder()
+                            .field(new FieldSort.Builder()
+                                    .field(sortField)
+                                    .order(sortRequest.getSortDirection())
+                                    .build())
+                            .build());
+                }
+            }
+
+            //get filter options
+            if (filter != null && !filter.isEmpty()) {
+                List<FilterRequest> filterRequestList = Util.parseFilterRequest(filter);
+                for (FilterRequest filterRequest : filterRequestList) {
+                    switch (filterRequest.getFilterOperations()) {
+                        case "gte" -> boolQuery.filter(RangeQuery.of(r -> r
+                                        .field(filterRequest.getFilterField())
+                                        .gte(JsonData.of(filterRequest.getFliterValue())))
+                                ._toQuery());
+                        case "lte" -> boolQuery.filter(RangeQuery.of(r -> r
+                                        .field(filterRequest.getFilterField())
+                                        .lte(JsonData.of(filterRequest.getFliterValue())))
+                                ._toQuery());
+                        case "eq" -> boolQuery.filter(TermQuery.of(t -> t
+                                        .field(filterRequest.getFilterField())
+                                        .value(FieldValue.of(filterRequest.getFliterValue())))
+                                ._toQuery());
+                    }
+                }
+            }
+
+            try{
+                Page<RestaurantSearchResponse> restaurantSearchResponses = restaurantElkService.searchRestaurant(boolQuery.build(),
+                        sortOptions,
+                        pageRequest);
+
+                MetaData metaData = MetaData.builder()
+                        .totalPage(restaurantSearchResponses.getTotalPages())
+                        .currentPage(restaurantSearchResponses.getNumber())
+                        .pageSize(restaurantSearchResponses.getSize())
+                        .build();
+
+                return ResponseBuilder.okResponse(
+                        MessageResponseEnum.SEARCH_RESTAURANT_SUCCESS.getMessage(),
+                        restaurantSearchResponses.getContent(),
+                        ResponseCodeEnum.SEARCHRESTAURANT1200,
+                        metaData);
+
+            }catch (Exception e){
+                return ResponseBuilder.badRequestResponse(
+                        MessageResponseEnum.SEARCH_RESTAURANT_FAILED.getMessage(),
+                        ResponseCodeEnum.SEARCHRESTAURANT0201);
+            }
+
+
+        }catch (Exception e){
+            return ResponseBuilder.badRequestResponse(
+                    MessageResponseEnum.SEARCH_RESTAURANT_FAILED.getMessage(),
+                    ResponseCodeEnum.SEARCHRESTAURANT0200);
+        }
+    }
+
 
     private List<TagModel> getTagModelList(List<String> tagIdList) {
         List<TagModel> tagList = new ArrayList<>();
@@ -223,6 +325,7 @@ public class RestaurantServiceImpl implements RestaurantService {
             newRestaurant.setUserAddId(oldData.getUserAddId());
             newRestaurant.setUserUpdateId(userUpdate.getId());
             newRestaurant.setRestaurantImageUrlList(oldData.getRestaurantImageUrlList());
+            newRestaurant.setPoint(oldData.getPoint());
             newRestaurant.setCreatedAt(oldData.getCreatedAt());
             newRestaurant.setUpdatedAt(LocalDateTime.now());
             return newRestaurant;
