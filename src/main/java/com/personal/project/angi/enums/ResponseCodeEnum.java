@@ -52,6 +52,35 @@ public enum ResponseCodeEnum {
     SEARCHUSER0200("SEARCHUSER0200", "Search user failed with uncategory exception"),
     SEARCHUSER0201("SEARCHUSER0201", "Search user from ELK failed"),
 
+    //CREATE RESTAURANT
+    CREATERESTAURANT1200("CREATERESTAURANT1200", "Create restaurant successfully"),
+    CREATERESTAURANT0200("CREATERESTAURANT0200", "Create restaurant failed"),
+    CREATERESTAURANT0201("CREATERESTAURANT0201", "Cant find the user who want to create restaurant"),
+    CREATERESTAURANT0202("CREATERESTAURANT0202", "Map request to restaurant model failed"),
+    CREATERESTAURANT0203("CREATERESTAURANT0203", "Save restaurant image failed"),
+    CREATERESTAURANT0204("CREATERESTAURANT0204", "Save restaurant into database failed"),
+
+    //CREATE TAG
+    CREATETAG1200("CREATETAG1200", "Create tag successfully"),
+    CREATETAG0200("CREATETAG0200", "Create tag failed"),
+
+    //DELETE TAG
+    DELETETAG1200("DELETETAG1200", "Delete tag successfully"),
+    DELETETAG0200("DELETETAG0200", "Delete tag failed"),
+
+    //UPDATE TAG
+    UPDATETAG1200("UPDATETAG1200", "Update tag successfully"),
+    UPDATETAG0200("UPDATETAG0200", "Update tag failed"),
+    UPDATETAG0201("UPDATETAG0201", "Cannot find the tag to update"),
+
+    //GET TAG
+    GETTAG1200("GETTAG1200", "Get tag successfully"),
+    GETTAG0200("GETTAG0200", "Get tag failed"),
+    GETTAG0201("GETTAG0201", "Cannot find the tag"),
+
+    //GET ALL TAG
+    GETALLTAGS1200("GETALLTAGS1200", "Get all tag successfully"),
+    GETALLTAGS0200("GETALLTAGS0200", "Get all tag failed"),
 
     //GENERAL
     EXCEPTION("EXCEPTION", "Uncatagory Exception"),

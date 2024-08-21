@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface FileService {
-    List<Map> uploadMultiFiles(MultipartFile[] multipartFiles, String folderName) throws IOException;
+    List<Map> uploadMultiFiles(MultipartFile[] multipartFiles, String id, String typeUpload) throws IOException;
 
     Map uploadFile(MultipartFile multipartFile, String id, String typeUpload) throws IOException;
 

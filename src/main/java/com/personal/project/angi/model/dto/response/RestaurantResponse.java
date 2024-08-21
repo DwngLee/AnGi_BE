@@ -1,21 +1,18 @@
-package com.personal.project.angi.model.basemodel;
+package com.personal.project.angi.model.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.personal.project.angi.enums.RestaurantStateEnum;
-import lombok.Builder;
+import com.personal.project.angi.model.basemodel.OpenTimeBaseModel;
+import com.personal.project.angi.model.basemodel.TagBaseModel;
+import com.personal.project.angi.model.dto.OpenTimeDto;
 import lombok.Data;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
-public class RestaurantBaseModel {
-    @Id
+public class RestaurantResponse {
     private String id;
 
     private String restaurantName;
@@ -54,21 +51,20 @@ public class RestaurantBaseModel {
 
     private Boolean outdoorSeating;
 
-    private String userAddId;
+    private UserInfoResponse userAdd;
 
-    private String userUpdateId;
+    private UserInfoResponse userUpdate;
 
-    private List<OpenTimeBaseModel> openTimeBaseModelList;
+    @JsonProperty("openTimeList")
+    private List<OpenTimeDto> openTimeList;
 
-    private List<String> tagIdList;
+    @JsonProperty("tagList")
+    private List<TagResponse> tagList;
 
     private List<String> restaurantImageUrlList;
 
-    @Field("createdAt")
-    @CreatedDate
-    private LocalDateTime createdAt;
+    @JsonProperty("timeAdded")
+    private LocalDateTime createdDate;
 
-    @Field("updatedAt")
-    @LastModifiedDate
-    private LocalDateTime updatedAt;
+    private double point;
 }

@@ -109,4 +109,9 @@ public class TagServiceImpl implements TagService {
                     ResponseCodeEnum.GETALLTAGS0200);
         }
     }
+
+    @Override
+    public TagModel getTagModel(String id) {
+        return tagRepository.findById(id).orElse(null);
+    }
 }

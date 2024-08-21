@@ -22,11 +22,16 @@ public class FileServiceImpl implements FileService {
     private  Cloudinary cloudinary;
 
     @Override
-    public List<Map> uploadMultiFiles(MultipartFile[] multipartFiles, String folderName) throws IOException {
+    public List<Map> uploadMultiFiles(MultipartFile[] multipartFiles, String id,  String typeUpload) throws IOException {
         List<Map> results = new ArrayList<>();
+        String filePathKey = getFilePathKey(id, typeUpload);
+        Map params = ObjectUtils.asMap(
+                "use_filename", false,
+                "unique_filename", true,
+                "folder", filePathKey
+        );
         for (MultipartFile multipartFile : multipartFiles) {
             File file = convert(multipartFile);
-            Map params = ObjectUtils.asMap("folder", folderName); // Đặt thư mục trong đây
             Map result = cloudinary.uploader().upload(file, params);
             results.add(result);
             if (!Files.deleteIfExists(file.toPath())) {
