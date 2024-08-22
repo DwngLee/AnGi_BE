@@ -8,6 +8,7 @@ import java.util.List;
 
 @Data
 public class RestaurantSearchResponse {
+
     private String id;
 
     private String restaurantName;

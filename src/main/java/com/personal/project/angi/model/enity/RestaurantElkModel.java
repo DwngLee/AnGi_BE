@@ -6,7 +6,7 @@ import lombok.Data;
 import org.springframework.data.elasticsearch.annotations.Document;
 
 @Data
-@Document(indexName = "restaurant")
+@Document(indexName = "restaurant_info")
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class RestaurantElkModel extends RestaurantElkBaseModel {
 

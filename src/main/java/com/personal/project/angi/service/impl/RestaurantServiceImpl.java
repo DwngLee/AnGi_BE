@@ -107,7 +107,7 @@ public class RestaurantServiceImpl implements RestaurantService {
             List<TagModel> tagList = getTagModelList(request.getTagIdList());
 
             RestaurantElkModel restaurantElkModel = restaurantMapper.toRestaurantElkModel(restaurantModel);
-            restaurantElkModel.setTagBaseModelList(tagList);
+            restaurantElkModel.setTagList(tagMapper.toTagResponseList(tagList));
 
             try {
                 restaurantRepository.save(restaurantModel);
@@ -192,7 +192,7 @@ public class RestaurantServiceImpl implements RestaurantService {
             RestaurantModel newRestaurantData = null;
 
             try {
-                newRestaurantData =  migrateRestaurantData(newData, oldData, userUpdate);
+                newRestaurantData = migrateRestaurantData(newData, oldData, userUpdate);
             } catch (Exception e) {
                 return ResponseBuilder.badRequestResponse(
                         MessageResponseEnum.UPDATE_RESTAURANT_FAILED.getMessage(),
@@ -200,9 +200,9 @@ public class RestaurantServiceImpl implements RestaurantService {
             }
 
             RestaurantElkModel restaurantElkModel = restaurantMapper.toRestaurantElkModel(newRestaurantData);
-            restaurantElkModel.setTagBaseModelList(tagList);
+            restaurantElkModel.setTagList(tagMapper.toTagResponseList(tagList));
 
-            try{
+            try {
                 restaurantRepository.save(newRestaurantData);
                 restaurantElkService.saveOrUpdateRestaurant(restaurantElkModel);
                 return ResponseBuilder.okResponse(
@@ -227,7 +227,7 @@ public class RestaurantServiceImpl implements RestaurantService {
                                                                                         String keyword,
                                                                                         String sort,
                                                                                         String filter) {
-        try{
+        try {
             Object temp = SecurityContextHolder.getContext().getAuthentication();
             BoolQuery.Builder boolQuery = new BoolQuery.Builder();
             List<SortOptions> sortOptions = new ArrayList<>();
@@ -275,7 +275,7 @@ public class RestaurantServiceImpl implements RestaurantService {
                 }
             }
 
-            try{
+            try {
                 Page<RestaurantSearchResponse> restaurantSearchResponses = restaurantElkService.searchRestaurant(boolQuery.build(),
                         sortOptions,
                         pageRequest);
@@ -292,14 +292,14 @@ public class RestaurantServiceImpl implements RestaurantService {
                         ResponseCodeEnum.SEARCHRESTAURANT1200,
                         metaData);
 
-            }catch (Exception e){
+            } catch (Exception e) {
                 return ResponseBuilder.badRequestResponse(
                         MessageResponseEnum.SEARCH_RESTAURANT_FAILED.getMessage(),
                         ResponseCodeEnum.SEARCHRESTAURANT0201);
             }
 
 
-        }catch (Exception e){
+        } catch (Exception e) {
             return ResponseBuilder.badRequestResponse(
                     MessageResponseEnum.SEARCH_RESTAURANT_FAILED.getMessage(),
                     ResponseCodeEnum.SEARCHRESTAURANT0200);

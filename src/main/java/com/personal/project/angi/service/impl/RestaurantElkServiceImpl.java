@@ -7,14 +7,13 @@ import co.elastic.clients.elasticsearch.core.SearchRequest;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
 import co.elastic.clients.elasticsearch.core.search.Hit;
 import com.personal.project.angi.mapping.RestaurantMapper;
-import com.personal.project.angi.model.basemodel.UserElkBaseModel;
+import com.personal.project.angi.model.basemodel.RestaurantElkBaseModel;
 import com.personal.project.angi.model.dto.response.RestaurantSearchResponse;
-import com.personal.project.angi.model.dto.response.UserSearchResponse;
 import com.personal.project.angi.model.enity.RestaurantElkModel;
-import com.personal.project.angi.model.enity.UserElkModel;
 import com.personal.project.angi.repository.elk.RestaurantElkRepository;
 import com.personal.project.angi.service.RestaurantElkService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -26,8 +25,9 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class RestaurantElkServiceImpl implements RestaurantElkService {
-    private final String INDEX_NAME = "restaurant";
+    private final String INDEX_NAME = "restaurant_info";
 
     private final ElasticsearchClient elasticsearchClient;
     private final RestaurantElkRepository restaurantElkRepository;
@@ -54,8 +54,6 @@ public class RestaurantElkServiceImpl implements RestaurantElkService {
                 .build();
 
         SearchResponse<RestaurantElkModel> response = elasticsearchClient.search(searchRequest, RestaurantElkModel.class);
-
-
         List<RestaurantElkModel> restaurants = response.hits().hits().stream()
                 .map(Hit::source)
                 .toList();

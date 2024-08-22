@@ -30,8 +30,10 @@ public interface RestaurantMapper {
     RestaurantResponse toRestaurantResponse(RestaurantModel model);
 
     @Mapping(target = "location", expression = "java(toGeoPoint(model.getLatitude(), model.getLongitude()))")
+    @Mapping(target = "openTimeList", source = "openTimeBaseModelList")
     RestaurantElkModel toRestaurantElkModel(RestaurantModel model);
 
+//    @Mapping(target = "location", expression = "java(toGeoPoint(model.getLatitude(), model.getLongitude()))")
     RestaurantSearchResponse toRestaurantSearchResponse(RestaurantElkModel model);
 
     default GeoPoint toGeoPoint(BigDecimal latitude, BigDecimal longitude) {
