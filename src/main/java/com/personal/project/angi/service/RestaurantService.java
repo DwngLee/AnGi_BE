@@ -16,5 +16,5 @@ public interface RestaurantService {
 
     ResponseEntity<ResponseDto<Void>> updateRestaurant(String id, RestaurantUpdateRequest request);
 
-    ResponseEntity<ResponseDto<List<RestaurantSearchResponse>>> searchRestaurant(int pageNo, int pageSize, String keyword, String sort, String filter);
+    ResponseEntity<ResponseDto<List<RestaurantSearchResponse>>> searchRestaurant(int pageNo, int pageSize, String keyword, String sort, String filter, String lat, String lon, String radius);
 }

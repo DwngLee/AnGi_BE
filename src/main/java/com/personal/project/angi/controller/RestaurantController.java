@@ -41,9 +41,12 @@ public class RestaurantController {
                                                                                   @RequestParam(required = false, defaultValue = "10") int pageSize,
                                                                                   @RequestParam(required = false) String keyword,
                                                                                   @RequestParam(required = false) String sort,
-                                                                                  @RequestParam(required = false) String filter) {
+                                                                                  @RequestParam(required = false) String filter,
+                                                                                  @RequestParam(required = false) String lat,
+                                                                                  @RequestParam(required = false) String lon,
+                                                                                  @RequestParam(required = false) String radius) {
         pageNo = pageNo < 0 ? 0 : pageNo;
         pageSize = pageSize <= 0 ? 10 : pageSize;
-        return restaurantService.searchRestaurant(pageNo, pageSize, keyword, sort, filter);
+        return restaurantService.searchRestaurant(pageNo, pageSize, keyword, sort, filter, lat, lon, radius);
     }
 }

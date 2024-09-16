@@ -1,12 +1,7 @@
 package com.personal.project.angi.service.impl;
 
-import co.elastic.clients.elasticsearch._types.FieldSort;
-import co.elastic.clients.elasticsearch._types.FieldValue;
-import co.elastic.clients.elasticsearch._types.SortOptions;
-import co.elastic.clients.elasticsearch._types.query_dsl.BoolQuery;
-import co.elastic.clients.elasticsearch._types.query_dsl.MultiMatchQuery;
-import co.elastic.clients.elasticsearch._types.query_dsl.RangeQuery;
-import co.elastic.clients.elasticsearch._types.query_dsl.TermQuery;
+import co.elastic.clients.elasticsearch._types.*;
+import co.elastic.clients.elasticsearch._types.query_dsl.*;
 import co.elastic.clients.json.JsonData;
 import com.personal.project.angi.configuration.security.UserDetailsImpl;
 import com.personal.project.angi.constant.UploadConstant;
@@ -226,21 +221,32 @@ public class RestaurantServiceImpl implements RestaurantService {
                                                                                         int pageSize,
                                                                                         String keyword,
                                                                                         String sort,
-                                                                                        String filter) {
+                                                                                        String filter,
+                                                                                        String lat,
+                                                                                        String lon,
+                                                                                        String radius) {
         try {
-            Object temp = SecurityContextHolder.getContext().getAuthentication();
-            BoolQuery.Builder boolQuery = new BoolQuery.Builder();
-            List<SortOptions> sortOptions = new ArrayList<>();
             PageRequest pageRequest = PageRequest.of(pageNo, pageSize);
 
             //#Todo: Refactor code to reduce boiler code
+            BoolQuery.Builder keywordQuery = new BoolQuery.Builder();
             if (keyword != null && !keyword.isEmpty()) {
-                boolQuery.must(MultiMatchQuery.of(m -> m
-                                .query(keyword))
-                        ._toQuery());
+                keywordQuery.should(MultiMatchQuery.of(m -> m
+                                .fields("restaurantName^2", "description^0.5", "houseNumber^0.5", "ward^0.5", "district^0.5", "city")
+                                .query(keyword)
+                                .fuzziness("AUTO")
+                                .type(TextQueryType.BestFields))._toQuery())
+                        .should(NestedQuery.of(n -> n
+                                .path("tagList")
+                                .query(MultiMatchQuery.of(m -> m
+                                        .fields("tagList.tagName")
+                                        .query(keyword)
+                                        .fuzziness("AUTO")
+                                        .type(TextQueryType.BestFields))._toQuery()))._toQuery());
             }
 
             //get sort options
+            List<SortOptions> sortOptions = new ArrayList<>();
             if (sort != null && !sort.isEmpty()) {
                 List<SortRequest> sortRequestList = Util.parseSortRequest(sort);
                 for (SortRequest sortRequest : sortRequestList) {
@@ -255,19 +261,20 @@ public class RestaurantServiceImpl implements RestaurantService {
             }
 
             //get filter options
+            BoolQuery.Builder filterQuery = new BoolQuery.Builder();
             if (filter != null && !filter.isEmpty()) {
                 List<FilterRequest> filterRequestList = Util.parseFilterRequest(filter);
                 for (FilterRequest filterRequest : filterRequestList) {
                     switch (filterRequest.getFilterOperations()) {
-                        case "gte" -> boolQuery.filter(RangeQuery.of(r -> r
+                        case "gte" -> filterQuery.filter(RangeQuery.of(r -> r
                                         .field(filterRequest.getFilterField())
                                         .gte(JsonData.of(filterRequest.getFliterValue())))
                                 ._toQuery());
-                        case "lte" -> boolQuery.filter(RangeQuery.of(r -> r
+                        case "lte" -> filterQuery.filter(RangeQuery.of(r -> r
                                         .field(filterRequest.getFilterField())
                                         .lte(JsonData.of(filterRequest.getFliterValue())))
                                 ._toQuery());
-                        case "eq" -> boolQuery.filter(TermQuery.of(t -> t
+                        case "eq" -> filterQuery.filter(TermQuery.of(t -> t
                                         .field(filterRequest.getFilterField())
                                         .value(FieldValue.of(filterRequest.getFliterValue())))
                                 ._toQuery());
@@ -275,8 +282,26 @@ public class RestaurantServiceImpl implements RestaurantService {
                 }
             }
 
+            //get location options
+            if (lat != null && lon != null && radius != null) {
+                LatLonGeoLocation latLonGeoLocation = LatLonGeoLocation.of(l -> l.lat(Double.parseDouble(lat)).lon(Double.parseDouble(lon)));
+                GeoLocation geoLocation = GeoLocation.of(l -> l.latlon(latLonGeoLocation));
+
+                Query geoDistanceQuery = GeoDistanceQuery.of(g -> g
+                        .field("location")
+                        .distance(radius)
+                        .location(geoLocation)
+                        .distanceType(GeoDistanceType.Arc))._toQuery();
+
+                filterQuery.filter(geoDistanceQuery);
+            }
+
+            BoolQuery.Builder mainQuery = new BoolQuery.Builder()
+                    .must(keywordQuery.build()._toQuery())
+                    .filter(filterQuery.build()._toQuery());
+
             try {
-                Page<RestaurantSearchResponse> restaurantSearchResponses = restaurantElkService.searchRestaurant(boolQuery.build(),
+                Page<RestaurantSearchResponse> restaurantSearchResponses = restaurantElkService.searchRestaurant(mainQuery.build(),
                         sortOptions,
                         pageRequest);
 
@@ -334,4 +359,5 @@ public class RestaurantServiceImpl implements RestaurantService {
             throw e;
         }
     }
+
 }

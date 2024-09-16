@@ -46,6 +46,7 @@ public class Util {
         return sortRequestList;
     }
 
+    //Examples: filed(opration) = value or filed = value
     public List<FilterRequest> parseFilterRequest(String filterString) {
         List<FilterRequest> filterRequestList = new ArrayList<>();
         String[] filters = filterString.split("AND");
